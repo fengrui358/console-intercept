@@ -63,28 +63,34 @@ export const interceptRemoteLog = function (appName, url) {
             }
         });
 
-        const body = JSON.stringify(request);
-        if (isNode) {
-            const urlObj = new URL(url);
-            let invoker = require(urlObj.protocol.slice(0, urlObj.protocol.length - 1));
-            const req = invoker.request({
-                hostname: urlObj.hostname,
-                port: urlObj.port,
-                path: urlObj.pathname,
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Content-Length': body.length,
-                },
-            });
+        if (messages.length > 0) {
+            request.messages = messages;
+            const body = JSON.stringify(request);
+            if (isNode) {
+                const urlObj = new URL(url);
+                let invoker = require(urlObj.protocol.slice(
+                    0,
+                    urlObj.protocol.length - 1
+                ));
+                const req = invoker.request({
+                    hostname: urlObj.hostname,
+                    port: urlObj.port,
+                    path: urlObj.pathname,
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Content-Length': body.length,
+                    },
+                });
 
-            req.write(body);
-            req.end();
-        } else if (isBrowser) {
-            let req = new XMLHttpRequest();
-            req.open('POST', url, true);
-            req.setRequestHeader('Content-Type', 'application/json');
-            req.send(body);
+                req.write(body);
+                req.end();
+            } else if (isBrowser) {
+                let req = new XMLHttpRequest();
+                req.open('POST', url, true);
+                req.setRequestHeader('Content-Type', 'application/json');
+                req.send(body);
+            }
         }
     });
 };
