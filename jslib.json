@@ -1,0 +1,11 @@
+{
+    "name": "console-intercept",
+    "npmname": "console-intercept",
+    "umdname": "console-intercept",
+    "username": "fengrui358",
+    "type": "js",
+    "module": "umd,esm,commonjs",
+    "test": "mocha",
+    "lang": "en",
+    "version": "1.6.0"
+}
