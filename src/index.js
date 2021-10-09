@@ -1,14 +1,30 @@
-import { yan } from './test.js';
+let isIntercept = false;
+let interceptFuns = [];
 
-import yan2 from './test.js';
+export const intercept = function (fun) {
+    if (typeof fun === 'function') {
+        interceptFuns.push(fun);
+    }
 
-console.log(yan);
-console.log(yan2);
+    if (!isIntercept) {
+        isIntercept = true;
 
-var a = 1 + 1;
-var b = a;
-console.log(a);
-console.log(b);
-
-export const name = 'base';
-
+        window.console = (function (origConsole) {
+            let result = {};
+    
+            Object.values(console)
+                .filter((s) => typeof s === 'function')
+                .forEach((f) => {
+                    result[f.name] = function () {
+                        let args = [...arguments];
+                        origConsole[f.name].apply(origConsole, args);
+                        interceptFuns.forEach(fun => {
+                            fun(f.name, [...arguments]);
+                        });
+                    };
+                });
+    
+            return result;
+        })(window.console);
+    }
+};
