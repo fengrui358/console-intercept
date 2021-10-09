@@ -1,4 +1,5 @@
 var { intercept } = require('../dist/index.js');
+
 intercept((name, args) => {
     return args.reduce((pre, curr) => pre + curr);
 });

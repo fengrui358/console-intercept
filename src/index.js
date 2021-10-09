@@ -1,5 +1,12 @@
 let isIntercept = false;
 let interceptFuns = [];
+var isBrowser =
+    typeof window !== 'undefined' &&
+    {}.toString.call(window) === '[object Window]';
+var isNode =
+    typeof global !== 'undefined' &&
+    {}.toString.call(global) === '[object global]';
+
 const rewrite = function (origConsole) {
     let result = {};
     Object.values(console)
@@ -23,9 +30,9 @@ export const intercept = function (fun) {
 
     if (!isIntercept) {
         isIntercept = true;
-        if (global) {
+        if (isNode) {
             global.console = rewrite(global.console);
-        } else if (window) {
+        } else if (isBrowser) {
             window.console = rewrite(window.console);
         }
     }
@@ -56,9 +63,28 @@ export const interceptRemoteLog = function (appName, url) {
             }
         });
 
-        let req = new XMLHttpRequest();
-        req.open('POST', url, true);
-        req.setRequestHeader('Content-Type', 'application/json');
-        req.send(JSON.stringify(request));
+        const body = JSON.stringify(request);
+        if (isNode) {
+            const urlObj = new URL(url);
+            let invoker = require(urlObj.protocol.slice(0, urlObj.protocol.length - 1));
+            const req = invoker.request({
+                hostname: urlObj.hostname,
+                port: urlObj.port,
+                path: urlObj.pathname,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': body.length,
+                },
+            });
+
+            req.write(body);
+            req.end();
+        } else if (isBrowser) {
+            let req = new XMLHttpRequest();
+            req.open('POST', url, true);
+            req.setRequestHeader('Content-Type', 'application/json');
+            req.send(body);
+        }
     });
 };
