@@ -1,6 +1,6 @@
 {
   "name": "console-intercept",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "console intercept",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.esm.js",
