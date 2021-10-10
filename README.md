@@ -16,4 +16,4 @@ The best third party `JS|TS` library scaffold.
 - use in browser: `import { intercept } from 'console-intercept'`
 - use in node: `const { intercept } from 'console-intercept'`
 - intercept: `intercept((name, args) => { //name is console's methods name, args is console's arguments })`
-- interceptRemoteLog: `interceptRemoteLog(appName, url)`
+- setRemoteLog: `setRemoteLog(appName, url)`
