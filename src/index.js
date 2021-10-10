@@ -1,9 +1,9 @@
 let isIntercept = false;
 let interceptFuns = [];
-var isBrowser =
+const isBrowser =
     typeof window !== 'undefined' &&
     {}.toString.call(window) === '[object Window]';
-var isNode =
+const isNode =
     typeof global !== 'undefined' &&
     {}.toString.call(global) === '[object global]';
 
@@ -38,7 +38,14 @@ export const intercept = function (fun) {
     }
 };
 
-export const interceptRemoteLog = function (appName, url) {
+let remoteLogCache = new Set();
+export const setRemoteLog = function (appName, url) {
+    if (!remoteLogCache.has(url)) {
+        remoteLogCache.add(url);
+    } else {
+        return;
+    }
+
     intercept(function (name, args) {
         let request = {
             appName: appName,
